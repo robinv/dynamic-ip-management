@@ -1,0 +1,73 @@
+#!/bin/bash
+#
+# Publishes your current external ip address to a file on a remote server using a SSH connection.
+
+# The host that is used for the SSH connection.
+SSH_HOST="127.0.0.1"
+
+# The user that is used for the SSH connection. When no user is set the
+# connection is established without user.
+SSH_USER=
+
+# The file where the external ip is written to on the remote server. 
+# Make sure that the file is writable by the SSH_USER.
+FILE_PATH="/tmp/dynamic-ip"
+
+######################################################
+# Displays the available options and a usage example
+# Arguments:
+#   None
+# Returns:
+#   None
+######################################################
+print_help() {
+	echo "$(basename "${0}")"
+  echo "Usage: ${0} [options...]"
+  echo
+  echo "Options:"
+  echo " -h, --host 	The host that is used for the SSH connection. 
+  		(Default: 127.0.0.1)"
+  echo " -u, --user 	The user that is used for the SSH connection. 
+  		(Default: None)"
+  echo " -f, --file  	The file where your current external ip is written to on the remote server. 
+  		(Default: /tmp/dynamic-ip)"
+}
+
+# Reading the options
+while [[ $# > 1 ]]
+	do
+		key="${1}"
+		case $key in
+	    -h|--host)
+		    SSH_HOST="${2}"
+		    shift
+		    ;;
+	    -u|--user)
+				SSH_USER="${2}"
+				shift
+				;;
+			-f|--file)
+				FILE_PATH="${2}"
+				shift
+				;;
+	    *)
+				print_help
+				exit 1
+	    ;;
+	esac
+	shift
+done
+
+# Set contstants to readonly after reading the options.
+readonly SSH_USER
+readonly SSH_HOST
+readonly FILE_PATH
+
+if [ -n "${SSH_USER}" ]; then
+	host="${SSH_USER}@${SSH_HOST}"
+else
+	host="${SSH_HOST}"
+fi
+
+external_ip=$(dig +short myip.opendns.com @resolver1.opendns.com)
+ssh "${host}" "echo ${external_ip} > ${FILE_PATH}"
