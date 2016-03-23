@@ -12,23 +12,25 @@ The SSH to File Publisher publishes your current external ip address to a file o
 
 #### Usage
 ```bash
-./publisher-ssh-to-file [options...]
+./publisher-ssh-to-file [options...] hostname
 ```
 
 #### Options
 ```
--h, --host  The host that is used for the SSH connection. (Default: 127.0.0.1)
--u, --user 	The user that is used for the SSH connection. (Default: None)
--f, --file  The file where your current external ip is written to on the remote server. (Default: /tmp/dynamic-ip)
+-u, --user      The user that is used for the SSH connection.
+                (Default: None)
+-f, --file      The file where your current external ip is written to on the remote server.
+                You may need to use quotes if the file path contains a space.
+                (Default: /tmp/dynamic-ip)
 ```
 
 ## Distributors
 
 Distributors are meant to retrieve the external IP address from a specific location and distribute it to another place for further use, for example, reading the IP address from a file and adding it as an entry to `/etc/hosts`.
 
-### File Hosts Distributor
+### File to Hosts Distributor
 
-The File Hosts Distributor reads the content of a specific file and writes it as an entry to `/etc/hosts`. (Requires root privileges)
+The File to Hosts Distributor reads the content of a specific file and writes it as an entry to `/etc/hosts`. (Requires root privileges)
 
 #### TODO
 

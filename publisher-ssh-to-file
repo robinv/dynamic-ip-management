@@ -3,7 +3,7 @@
 # Publishes your current external ip address to a file on a remote server using a SSH connection.
 
 # The host that is used for the SSH connection.
-SSH_HOST="127.0.0.1"
+SSH_HOST=
 
 # The user that is used for the SSH connection. When no user is set the
 # connection is established without user.
@@ -21,26 +21,27 @@ FILE_PATH="/tmp/dynamic-ip"
 #   None
 ######################################################
 print_help() {
-  echo "$(basename "${0}")"
-  echo "Usage: ${0} [options...]"
+  echo "Usage: ${0} [options...] hostname"
   echo
   echo "Options:"
-  echo " -h, --host   The host that is used for the SSH connection. 
-      (Default: 127.0.0.1)"
-  echo " -u, --user   The user that is used for the SSH connection. 
-      (Default: None)"
-  echo " -f, --file    The file where your current external ip is written to on the remote server. 
-      (Default: /tmp/dynamic-ip)"
+  echo " -u, --user     The user that is used for the SSH connection."
+  echo "                (Default: None)"
+  echo " -f, --file     The file where your current external ip is written to on the remote server."
+  echo "                You may need to use quotes if the file path contains a space."
+  echo "                (Default: /tmp/dynamic-ip)"
 }
 
-# Reading the options
+# Reading the arguments
+if [ -z "${1}" ]; then
+  print_help
+  exit 1
+fi
+SSH_HOST="${1}"
+shift
+
 while [[ $# > 1 ]]; do
   key="${1}"
   case $key in
-    -h|--host)
-      SSH_HOST="${2}"
-      shift
-      ;;
     -u|--user)
       SSH_USER="${2}"
       shift
@@ -57,7 +58,7 @@ while [[ $# > 1 ]]; do
   shift
 done
 
-# Set contstants to readonly after reading the options.
+# Set contstants to readonly after reading the arguments.
 readonly SSH_USER
 readonly SSH_HOST
 readonly FILE_PATH
