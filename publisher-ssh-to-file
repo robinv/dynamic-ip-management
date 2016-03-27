@@ -1,6 +1,8 @@
 #!/bin/bash
 #
-# Publishes your current external ip address to a file on a remote server using a SSH connection.
+# Publishes your current external IP address to a file on a remote server using a SSH connection.
+
+set -e
 
 # The host that is used for the SSH connection.
 SSH_HOST=
@@ -9,7 +11,7 @@ SSH_HOST=
 # connection is established without user.
 SSH_USER=
 
-# The file where the external ip is written to on the remote server. 
+# The file where the external IP is written to on the remote server. 
 # Make sure that the file is writable by the SSH_USER.
 FILE_PATH="/tmp/dynamic-ip"
 
@@ -26,7 +28,7 @@ print_help() {
   echo "Options:"
   echo " -u, --user     The user that is used for the SSH connection."
   echo "                (Default: None)"
-  echo " -f, --file     The file where your current external ip is written to on the remote server."
+  echo " -f, --file     The file where your current external IP is written to on the remote server."
   echo "                You may need to use quotes if the file path contains a space."
   echo "                (Default: /tmp/dynamic-ip)"
 }
@@ -58,7 +60,7 @@ while [[ $# > 1 ]]; do
   shift
 done
 
-# Set contstants to readonly after reading the arguments.
+# Set constants to readonly after reading the arguments.
 readonly SSH_USER
 readonly SSH_HOST
 readonly FILE_PATH

@@ -1,0 +1,64 @@
+#!/bin/bash
+#
+# Reads the content of a file, preferably an IP address, and writes it as host to `/etc/hosts`.
+# If there already exists an host entry with the same name it will be replaced.
+# 
+# This scripts expects the content of the file to be an IP address.
+
+set -e
+
+# The file where the external IP is read from.
+# Make sure that the file is readable by the executing user.
+FILE_PATH="/tmp/dynamic-ip"
+
+# The name of the host that gets added to `/etc/hosts`.
+HOST="my-host"
+
+######################################################
+# Displays the available options and a usage example
+# Arguments:
+#   None
+# Returns:
+#   None
+######################################################
+print_help() {
+  echo "Reads the content of a file, preferably an IP address, and writes it as host to `/etc/hosts`."
+  echo "If there already exists an host entry with the same name it will be replaced."
+  echo "Usage: ${0} [options...]"
+  echo
+  echo "Options:"
+  echo " -h, --host     The name of the host that gets added to `/etc/hosts`."
+  echo "                (Default: None)"
+  echo " -f, --file     The file which content is read."
+  echo "                You may need to use quotes if the file path contains a space."
+  echo "                (Default: /tmp/dynamic-ip)"
+}
+
+while [[ $# > 1 ]]; do
+  key="${1}"
+  case $key in
+    -h|--host)
+      HOST="${2}"
+      shift
+      ;;
+    -f|--file)
+      FILE_PATH="${2}"
+      shift
+      ;;
+    *)
+      print_help
+      exit 1
+      ;;
+  esac
+  shift
+done
+
+# Set constants to readonly after reading the arguments.
+readonly HOST
+readonly FILE_PATH
+
+file_content=$(cat "${FILE_PATH}")
+hosts_content=$(cat /etc/hosts | grep -v "${HOST}")
+
+echo "${hosts_content}" > /etc/hosts
+echo -e "${file_content}\t${HOST}" >> /etc/hosts
